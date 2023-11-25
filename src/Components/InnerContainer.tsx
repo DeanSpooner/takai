@@ -1,20 +1,27 @@
 import { useState } from "react";
 import styled from "styled-components";
+import TileMap from "./TileMap";
 
 const GameContainer = styled.div`
-  aspect-ratio: 18/39;
-  height: 100vh;
-
-  @media screen and (max-width: 479px) {
-    aspect-ratio: 18/39;
-  }
+  height: 90vh;
+  width: 90vw;
   background-color: gray;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 `;
 
-const StartButton = styled.div`
+const StartButton = styled.div<{ faded: boolean }>`
+  @keyframes fadeout {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+      display: none;
+    }
+  }
   width: 90%;
   height: 30%;
   background-color: #fff;
@@ -23,6 +30,7 @@ const StartButton = styled.div`
   justify-content: center;
   border-radius: 12px;
   cursor: pointer;
+  animation: ${(props) => (props.faded ? "1s forwards fadeout" : "")};
 `;
 
 const StartButtonText = styled.p`
@@ -38,12 +46,20 @@ const StartButtonText = styled.p`
 
 const InnerContainer = () => {
   const [started, setStarted] = useState(false);
+  const [faded, setFaded] = useState(false);
 
   return (
     <GameContainer>
-      <StartButton onClick={() => setStarted(!started)}>
+      <StartButton
+        onClick={() => {
+          setStarted(!started);
+          setTimeout(() => setFaded(true), 500);
+        }}
+        faded={faded}
+      >
         <StartButtonText>{started ? "Started" : "Start"}</StartButtonText>
       </StartButton>
+      {faded && <TileMap faded={faded} />}
     </GameContainer>
   );
 };
